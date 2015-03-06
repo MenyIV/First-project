@@ -7,6 +7,8 @@
 //definice knihoven a komplexních proměnných
 #include <LiquidCrystal.h>                        //knihovna LCD
 #include <dht11.h>                                //knihovna čidla DHT11
+#define DHT11PIN 2                                //PIN DHT CIDLA
+dht11 DHT11;
 #define resistance 1                            //hystereze
 /* DOPLNIT   JAK  JE P5IPOJEN měl bych to mít v programu s počítadlem času tak jsem tam přidal tlačítko na zhaínání
  * LCD RS pin to digital pin 12
@@ -58,6 +60,31 @@ void setup() {
 
 
 void loop() {                         //programová smyčka
+//načtení čidel a vypsání jejich hodnot do serialu
+
+//DHT11
+  Serial.println("\n");
+  int chk = DHT11.read(DHT11PIN);
+  Serial.print("Read sensor: ");
+  switch (chk)
+  {
+    case 0: Serial.println("OK"); break;
+    case -1: Serial.println("Chyba souctu"); break;
+    case -2: Serial.println("Cas vyprsel"); break;
+    default: Serial.println("Neznámá chyba"); break;
+  }
+  gettemp1 = dht.readTemperature();     //zde možno upravit přepočet pokud nesedí výstup z čidla
+  gethum1 = dht.readHumidity();
+Serial.println("vnejsi cidlo DHT11:")
+Serial.println("vnejsi teplota:")
+Serial.println(gettemp1)
+Serial.println("vnejsi vlhkost:")
+Serial.println(gethum1)
+
+//DS18B20
+
+
+
 
 if digitaRead(     //pokud je tlačítko na podsvícení on tak on jinak off
 
