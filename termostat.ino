@@ -6,30 +6,29 @@
 
 //definice knihoven a komplexních proměnných
 #include <LiquidCrystal.h>                        //knihovna LCD
+#define LCD_LIGHT_PIN A1                          //PIN LCD Svetla
 #include <dht11.h>                                //knihovna čidla DHT11
 #define DHT11PIN 2                                //PIN DHT CIDLA
 dht11 DHT11;
 #define resistance 1                            //hystereze
 /* DOPLNIT   JAK  JE P5IPOJEN měl bych to mít v programu s počítadlem času tak jsem tam přidal tlačítko na zhaínání
- * LCD RS pin to digital pin 12
- * LCD Enable pin to digital pin 11
- * LCD D4 pin to digital pin 5
- * LCD D5 pin to digital pin 4
- * LCD D6 pin to digital pin 3
- * LCD D7 pin to digital pin 2
  * LCD R/W pin to ground
  * 10K resistor:
  * ends to +5V and ground
  * wiper to LCD VO pin (pin 3)
+         LCD(RS,Enable, D4, D5, D6, D7)
  */
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);            // zapojení LCD JHD – 162A
+LiquidCrystal lcd(7, 6, 5, 4, 3, 2);            // zapojení LCD JHD – 162A
 boolean rel1;                                     //stav RELE   rel1= chlazení; rel2=topení
 boolean rel2;
 unsigned char settemp;                            //proměnná pro nastavenou teplotu
 unsigned char gettemp1;                           //teplota 1/VENKU+vlhkost 2/UVNITR 3/PONORAK  
 char gethum1;
 unsigned char gettemp2;                              
-unsigned char gettemp3;                                  
+unsigned char gettemp3;           
+const int buttonPin = 8;        //tlčítko pro zapnutí podsvícení
+int buttonState = 0;            //stav tlačítka podsvícení
+
 
 
 float set=20.0;                                   //proměnné
@@ -38,8 +37,18 @@ int n=0;
 void setup() {
   lcd.begin(16, 2);
   
-  pinMode(7,OUTPUT); //rel1   - PIN7
-  pinMode(8,OUTPUT); //rel2   - PIN8
+    // Set the button pin as an input.
+  pinMode(buttonPin, INPUT);
+
+   // Set the LCD display backlight pin as an output.
+  pinMode(LCD_LIGHT_PIN, OUTPUT);
+
+  // Turn off the LCD backlight.
+  digitalWrite(LCD_LIGHT_PIN, LOW);
+  
+  
+  pinMode(11,OUTPUT); //rel1   - PIN7
+  pinMode(12,OUTPUT); //rel2   - PIN8
   
 //CIDLA 1-DHT11  2-DS18B20  3-DS18B20 waterproof
   pinMode(A0,INPUT); // hum senzor
@@ -83,7 +92,18 @@ Serial.println(gethum1)
 
 //DS18B20
 
-
+//podsvícení displeje zapnou/vypnout
+buttonState = digitalRead(buttonPin);
+Serial.println("Podsvícení LCD ON=1 OFF=0");
+Serial.println(buttonState);
+  if (buttonState == 1)
+{
+    digitalWrite(LCD_LIGHT_PIN, HIGH);
+}
+if (buttonState == 0)
+{
+ digitalWrite(LCD_LIGHT_PIN, LOW);
+}
 
 
 if digitaRead(     //pokud je tlačítko na podsvícení on tak on jinak off
