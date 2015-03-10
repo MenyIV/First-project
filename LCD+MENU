@@ -63,82 +63,66 @@ void setup() {
   Serial.begin(9600);  // output
 }
 
-// main loop, work is done by interrupt service routines, this one only prints stuff
-void loop() { 
-
+// MENU setup = ano1 ne0        podmínka pro zaplé vyplé menu 
   if (digitalRead(clearButton) == LOW && Setup == 0 )  {        //klik SW
     Serial.println("SW klik ON");
-
-
     Setup = 1;
     delay (750);
   }
   if (digitalRead(clearButton) == LOW && Setup == 1 )  {        //klik SW
     Serial.println("SW klik OFF");
-    Setup = 0;   
+    Setup = 0;                                                  // ukončení nastavení zapíše settemp
     settemp = lastReportedPos;
-
-
-
     delay (750);
   }
-
-  if (Setup == 1)
-  { 
-
+  if (Setup == 1){       //když je zaplý setup ano1 
     rotating = true;  // reset the debouncer
     if (encoderPos > 50 ){
       //    encoderPos = 0;
-      lastReportedPos = 49;             //nepustí pod nulu
+      lastReportedPos = 49;             //nepustí pod TsetMAX      koncák
     }
     if (encoderPos < -20 ){
       //    encoderPos = 0;
-      lastReportedPos = -19;             //nepustí pod nulu
+      lastReportedPos = -19;             //nepustí pod TsetMIN      koncák
     }
     else
     {
-      if (lastReportedPos != encoderPos && encoderPos<50 && encoderPos<50 ) {
-        Serial.print("Index:");
-        Serial.println(encoderPos, DEC);
+      if (lastReportedPos != encoderPos && encoderPos<50 && encoderPos>-19 ) {   //když se změní pozice a zároveň je v intervalu Tmin Tma
+        Serial.print("Index:");                                                   // vypíše do konzole a přepíše poslední
+        Serial.println(encoderPos, DEC);                        //pozici do aktuální
         Serial.println(lastReportedPos);
         lastReportedPos = encoderPos;
-
-        lcd.clear();
-        lcd.setCursor(0, 0);
-        lcd.print("nastav teplotu:");
-        lcd.setCursor(6, 1);
-        lcd.println(lastReportedPos);
       }
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("nastav teplotu:");
+    lcd.setCursor(6, 1);
+    lcd.println(lastReportedPos);
     }
   }
-  if (Setup == 0){
-    Serial.println("program ceka na:");
-    Serial.println(settemp);
-  }
-  buttonState = digitalRead(buttonPin);
-  //LCD backlight ON OFF
-  if (buttonState == 1)
+ // buttonState = digitalRead(buttonPin);         //načte tlačítko podsvícení a rozsvítí
+  if (digitalRead(buttonPin) == 0)               //LCD backlight ON OFF
   {
     digitalWrite(LCD_LIGHT_PIN, LOW);
   }
-  if (buttonState == 0)
+  if (digitalRead(buttonPin) == 1)
   {
     digitalWrite(LCD_LIGHT_PIN, HIGH);
   }
 
-  if (Setup == 0){
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("T1");
-
-    lcd.setCursor(0, 1);
+  if (Setup == 0){        //pokud je setup vyplý tak se vypisuje nějakej text na LCD
+    lcd.clear();                        ///
+    lcd.setCursor(0, 0);                //  /T1   T3    Tset             S
+    lcd.print("T1");                    ///
+                                        //  /T2   Hu    Tset-T1          S
+    lcd.setCursor(0, 1);                ///
     lcd.print("T2");
     lcd.setCursor(5, 0);
     lcd.print("T3");
 
     lcd.setCursor(5, 0);
     lcd.print("RH");
-    lcd.setCursor(10, 0);
+    lcd.setCursor(10, 0);                 // není to celý chyběj čidla
     lcd.print("ST");
 
     lcd.setCursor(10, 1);
@@ -164,13 +148,8 @@ void loop() {
 
 
 
-//  if (digitalRead(clearButton) == LOW )  {        //klik SW
-//     Serial.println("SW klik");
-//    delay (750);
-//  }
-//
 
-// Interrupt on A changing state
+// Interrupt on A changing state    změna stavu kroutítka
 void doEncoderA(){
   // debounce
   if ( rotating ) delay (1);  // wait a little until the bouncing is done
