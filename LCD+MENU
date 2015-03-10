@@ -62,7 +62,7 @@ void setup() {
 
   Serial.begin(9600);  // output
 }
-
+void loop(){
 // MENU setup = ano1 ne0        podmínka pro zaplé vyplé menu 
   if (digitalRead(clearButton) == LOW && Setup == 0 )  {        //klik SW
     Serial.println("SW klik ON");
