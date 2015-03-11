@@ -4,3 +4,38 @@ One Wire DS18
 http://www.strangeparty.com/2010/12/13/arduino-1-wire-temperature-sensors/
 
 http://www.instructables.com/id/Temperature-with-DS18B20/
+
+
+#define F_CPU 8000000L
+#include <util/delay.h>
+#include "1wire.c"
+
+ 
+ uint8_t ROM1[2][8],pocet_cidel=0;
+ int8_t	cidla;
+ int16_t teplota1,teplota2;
+ 
+int main()
+ {
+ 	_delay_ms(100);
+	cidla = OWFirst(ROM1[0],1,0);				// hledani prvniho cidla
+	if(cidla)									// pokud bylo nalezeno
+		pocet_cidel++;							// pocet cidel = 1
+	do											// hledani dalsich cidel
+		{	
+		cidla = OWNext(ROM1[pocet_cidel],1,0);			// hledej dalsi cidlo
+		if(cidla)								// pokud bylo nalezeno
+			pocet_cidel++;						// zvetsi pocet o jedno
+		}while(cidla);							// dokud byla nalzena dalsi cidla
+	
+ _delay_ms(10);
+ 
+ while(1)
+	{  	
+	teplota1=DS18B20_read_temp(ROM1[0]);				// nacist teplotu1 z cidla 0
+	_delay_ms(100);
+	teplota2=DS18B20_read_temp(ROM1[1]);				// nacist teplotu2 z cidla 1
+	_delay_ms(100);
+	}
+ }
+
