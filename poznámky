@@ -5,6 +5,9 @@ http://www.strangeparty.com/2010/12/13/arduino-1-wire-temperature-sensors/
 
 http://www.instructables.com/id/Temperature-with-DS18B20/
 
+http://www.abclinuxu.cz/poradna/programovani/show/72203
+
+
 
 #define F_CPU 8000000L
 #include <util/delay.h>
