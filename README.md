@@ -1,24 +1,34 @@
 # First-project
-Testing arduino termostat with display, three sensors (OUT,IN,INTERAL) , click rotating button and lcd backlight on/off button
 
-kostra 
------------------------------------------------------------------------------------------------------------------------------
-display:
-  zobrazení oktuálních hodnot čidel  IN OUT T
-  setup menu
-  signalizace stavu ohřev chlazení vyčkej pomocí indikátorů (speciální znaky)
+ARuino adaptible termostat
 
-čidla DHT11
-      DS18
-      ponorák
+LCD 16X2
+ARduino NANO
+double relay board
+DS18 thermosensor
+DHT11 thermo+hummidity
+3xLED (R;Y;B)
+KY-040 torgue button
 
-relé 1 + 2  relé na chlazení a ohřev
+Sensors:
+sensor DH11 works for short information.
 
-tlačítko na nastavení teploty po zmáčnutí naskočí setupmenu = teplota na výstupu
-  po druhém zmáčknutí se vrátí do původního stavu
-  --- tohle budu muset navrhnout a vyzkoušet jak to bude fungovat
-  ---- po zmáčknutí naskočí časovač na 60s který bez potvrzení nezapíše hodnotu a vrátí původní stav
+Two sensors DS18 are in. This check temperature and correcting heater/cooling.
 
 
-postup programování
-----------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+DISPLAY:
+-------------------------------------------------------------------------------------------------------------
+Teplota1 IN           Vnějšítplota/vlhkost
+Teplota2 ININ         nastavená teplota
+-------------------------------------------------------------------------------------------------------------
+
+DISPLAY:
+-------------------------------------------------------------------------------------------------------------
+Temperature1 IN           OUTtemperature/hummidity
+Temperature1 ININ         set temperature
+-------------------------------------------------------------------------------------------------------------
+
