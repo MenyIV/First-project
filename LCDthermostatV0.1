@@ -80,7 +80,11 @@ void setup() {
 
   // Turn off the LCD backlight.
   digitalWrite(LCD_LIGHT_PIN, LOW);
-
+  
+  
+pinMode(led1, OUTPUT);
+pinMode(led2, OUTPUT);
+pinMode(led3, OUTPUT);
   pinMode(rele1, OUTPUT);
   pinMode(rele2, OUTPUT);
   digitalWrite(rele1, HIGH);
@@ -287,9 +291,9 @@ void loop(){
   if (Setup == 0){
     if(teplota1 <= settemp-histereze && teplota1 < OFFheat)  
     {// čeká na samovolné ohřátí
-      //    digitalWrite(led1, 0);
-      //    digitalWrite(led3, 0);
-      //    digitalWrite(led2, 1);
+      digitalWrite(led1, 0);
+      digitalWrite(led3, 0);
+      digitalWrite(led2, 1);
       Serial.print ("cekam na teplo");
       digitalWrite(rele1, LOW);
       digitalWrite(rele2, LOW);
@@ -303,9 +307,9 @@ void loop(){
 
     if(teplota1 <= settemp-histereze && teplota1 > OFFheat) { 
       // topí
-      //    digitalWrite(led1, 1);
-      //    digitalWrite(led2, 0);
-      //    digitalWrite(led3, 0);
+      digitalWrite(led1, 1);
+      digitalWrite(led2, 0);
+      digitalWrite(led3, 0);
       Serial.print ("topim");
       digitalWrite(rele1, LOW);
       digitalWrite(rele2, HIGH);
@@ -316,9 +320,9 @@ void loop(){
 
     if(teplota1 >= settemp+histereze && teplota1 <OFFcool) {   
       //chladí
-      //    digitalWrite(led1,0);
-      //    digitalWrite(led2, 0);
-      //    digitalWrite(led3, 1);
+      digitalWrite(led1,0);
+      digitalWrite(led2, 0);
+      digitalWrite(led3, 1);
       Serial.print ("chladim");
       digitalWrite(rele1, HIGH);
       digitalWrite(rele2, LOW);
@@ -328,9 +332,9 @@ void loop(){
     }
     if(teplota1 >= settemp+histereze && teplota1 > OFFcool) { 
       //čeká na chladnutí 
-      //    digitalWrite(led1,0);
-      //    digitalWrite(led2, 1);
-      //    digitalWrite(led3, 0);
+       digitalWrite(led1,0);
+      digitalWrite(led2, 1);
+      digitalWrite(led3, 0);
       Serial.println ("cekam na chlad minimalni teplotu chlazeni");
       digitalWrite(rele1, LOW);
       digitalWrite(rele2, LOW);
@@ -341,9 +345,9 @@ void loop(){
     if (teplota1 <= settemp-histereze && teplota1 <= OFFheat) //nedělá nic
     {
 
-      //    digitalWrite(led1,0);
-      //    digitalWrite(led2, 1);
-      //    digitalWrite(led3, 0);
+      digitalWrite(led1,0);
+      digitalWrite(led2, 1);
+      digitalWrite(led3, 0);
       Serial.print ("cekam na hodnotu");
       //      delay (1000);
     }
