@@ -39,7 +39,7 @@ boolean led1 = A5;
 boolean led2 = A6;
 boolean led3 = A7;
 //unsigned int lastReportedPos = 1;   // change management
-float lastReportedPos = 20;   // change managemen
+float lastReportedPos;   // change managemen
 float settemp;
 int Setup;
 static boolean rotating=false;      // debounce management
@@ -50,6 +50,10 @@ float teplota2;
 float histereze;
 float OFFcool;
 float OFFheat;
+float oritemp;
+float orihum;
+float kortemp = -3;
+float korhum = 11 ;
 
 
 //Casování programu
@@ -80,19 +84,19 @@ void setup() {
 
   // Turn off the LCD backlight.
   digitalWrite(LCD_LIGHT_PIN, LOW);
-  
-  
-pinMode(led1, OUTPUT);
-pinMode(led2, OUTPUT);
-pinMode(led3, OUTPUT);
+
+
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
+  pinMode(led3, OUTPUT);
   pinMode(rele1, OUTPUT);
   pinMode(rele2, OUTPUT);
   digitalWrite(rele1, HIGH);
   digitalWrite(rele2, HIGH);
   Setup = 0;
-  settemp = 20;
+  settemp = 26;
   histereze = 1;
-  OFFcool = 20;
+  OFFcool = 15;
   OFFheat = 15;
 
 
@@ -111,82 +115,48 @@ pinMode(led3, OUTPUT);
   // encoder pin on interrupt 1 (pin 3)         vlevo - SWW
   attachInterrupt(1, doEncoderB, CHANGE);
 
-  Serial.begin(9600);  // output
+  //TEST LED a rele
+  Serial.print("TEST");
+  digitalWrite (led1, HIGH);
+  digitalWrite(led2, LOW);
+  digitalWrite(led3, LOW);
+  digitalWrite(rele1, LOW);
+  digitalWrite(rele2, HIGH);
+  delay(1000);
+  digitalWrite(led1, LOW);
+  digitalWrite(led2, HIGH);
+  digitalWrite(led3, LOW);
+  digitalWrite(rele1, HIGH);
+  digitalWrite(rele2, LOW);
+  delay(1000);
+  digitalWrite(led1, LOW);
+  digitalWrite(led2, LOW);
+  digitalWrite(led3, HIGH);
+  digitalWrite(rele1, LOW);
+  digitalWrite(rele2, LOW);
+  delay(1000);
+  digitalWrite(led1, LOW);
+  digitalWrite(led2, LOW);
+  digitalWrite(led3, LOW);
+  digitalWrite(rele1, HIGH);
+  digitalWrite(rele2, HIGH);
+  delay(1000);
+  digitalWrite(led1, HIGH);
+  digitalWrite(led2, HIGH);
+  digitalWrite(led3, HIGH);
+  digitalWrite(rele1, LOW);
+  digitalWrite(rele2, LOW);
+  delay(1000);
+  digitalWrite(led1, LOW);
+  digitalWrite(led2, LOW);
+  digitalWrite(led3, LOW);
+  digitalWrite(rele1, LOW);
+  digitalWrite(rele2, LOW);
+
+
+
 }
 void loop(){
-  /////////////////////////////////////////////////////////////////////////////////////////
-  //
-  //
-  // MENU setup = ano1 ne0        podmínka pro zaplé vyplé menu 
-  //
-  //
-  /////////////////////////////////////////////////////////////////////////////////////
-  delay(100);
-  if (digitalRead(clearButton) == LOW && Setup == 0 )  
-
-  {        //klik SW
-    Serial.println("SW klik ON");
-    Setup = 1;
-    delay (500);
-  }
-  if (digitalRead(clearButton) == LOW && Setup == 1 )  {        //klik SW
-    Serial.println("SW klik OFF");
-    Setup = 0;                                                  // ukončení nastavení zapíše settemp
-    settemp = lastReportedPos;
-    float LastReportedPos = settemp;
-    delay (500);
-  }
-  if (Setup == 1){
-    //    do
-    //    {       //když je zaplý setup ano1 
-    rotating = true;  // reset the debouncer
-    if (encoderPos > 50 ){
-      //    encoderPos = 0;
-      lastReportedPos = 49;             //nepustí pod TsetMAX      koncák
-    }
-    if (encoderPos < -20 ){
-      //    encoderPos = 0;
-      lastReportedPos = -19;             //nepustí pod TsetMIN      koncák
-    }
-    else
-    {
-      if (lastReportedPos != encoderPos && encoderPos<50 && encoderPos>-19 ) {   //když se změní pozice a zároveň je v intervalu Tmin Tma
-        Serial.print("Index:");                                                   // vypíše do konzole a přepíše poslední
-        Serial.println(encoderPos, DEC);                        //pozici do aktuální
-        Serial.println(lastReportedPos);
-        lastReportedPos = encoderPos;
-      }
-      lcd.clear();
-      lcd.setCursor(0, 0);
-      lcd.print("nastav teplotu:");
-      lcd.setCursor(6, 1);
-      lcd.println(lastReportedPos);
-    }
-    //    }
-    //    while (digitalRead(clearButton) == LOW && Setup == 1);
-  }
-  //////////////////////////////////////////////////////////////////////////////////////////////////
-  //
-  //
-  //
-  //podsvícení LCD
-  //
-  ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-  if (Setup == 0);
-  {
-    // buttonState = digitalRead(buttonPin);         //načte tlačítko podsvícení a rozsvítí
-    if (digitalRead(buttonPin) == 0)               //LCD backlight ON OFF
-    {
-      digitalWrite(LCD_LIGHT_PIN, LOW);
-      Serial.println("Backlight OFF");
-    }
-    if (digitalRead(buttonPin) == 1)
-    {
-      digitalWrite(LCD_LIGHT_PIN, HIGH);
-      Serial.println("Backlight ON");
-    }
-  }
   //////////////////////////////////////////////////////////////////////////////////////////////////
   //
   //
@@ -224,15 +194,101 @@ void loop(){
     DHT.read11(dht_dpin);
 
     Serial.print("Current humidity = ");
-    Serial.print(DHT.humidity);
+    orihum = DHT.humidity + korhum;
+    Serial.print(orihum);
     Serial.print("%  ");
     Serial.print("temperature = ");
-    Serial.print(DHT.temperature); 
+    oritemp = DHT.temperature + kortemp;
+    Serial.print(oritemp); 
     Serial.println("C  ");
     teplota0 = DHT.temperature;
     vlhko0 = DHT.humidity;
 
   }
+
+
+  /////////////////////////////////////////////////////////////////////////////////////////
+  //
+  //
+  // MENU setup = ano1 ne0        podmínka pro zaplé vyplé menu 
+  //
+  //
+  /////////////////////////////////////////////////////////////////////////////////////
+
+  if (digitalRead(clearButton) == LOW && Setup == 0 )  
+
+  {        //klik SW
+    Serial.println("SW klik ON");
+    Setup = 1;
+    delay (300);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("nastav teplotu:");
+    lcd.setCursor(0, 1);
+    lcd.print("T");
+    lcd.setCursor(1, 1);
+    lcd.print(teplota1);
+  }
+  if (digitalRead(clearButton) == LOW && Setup == 1 )  {        //klik SW
+    Serial.println("SW klik OFF");
+    Setup = 0;                                                  // ukončení nastavení zapíše settemp
+    settemp = lastReportedPos;
+    lastReportedPos = settemp;
+    encoderPos=lastReportedPos;
+    delay (500);
+  }
+  if (Setup == 1){
+    //    do
+    //    {       //když je zaplý setup ano1 
+    rotating = true;  // reset the debouncer
+    if (encoderPos > 50 ){
+      //    encoderPos = 0;
+      lastReportedPos = 49;             //nepustí pod TsetMAX      koncák
+    }
+    if (encoderPos < -20 ){
+      //    encoderPos = 0;
+      lastReportedPos = -19;             //nepustí pod TsetMIN      koncák
+    }
+    else
+    {
+      if (lastReportedPos != encoderPos && encoderPos<50 && encoderPos>-19 ) {   //když se změní pozice a zároveň je v intervalu Tmin Tma
+        Serial.print("Index:");                                                   // vypíše do konzole a přepíše poslední
+        Serial.println(encoderPos, DEC);                        //pozici do aktuální
+        Serial.println(lastReportedPos);
+        lastReportedPos = encoderPos;
+        delay(10);
+
+      }
+      lcd.setCursor(10, 1);
+      lcd.println(lastReportedPos);
+
+    }
+    //    }
+    //    while (digitalRead(clearButton) == LOW && Setup == 1);
+  }
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  //
+  //
+  //
+  //podsvícení LCD
+  //
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+  if (Setup == 0);
+  {
+    // buttonState = digitalRead(buttonPin);         //načte tlačítko podsvícení a rozsvítí
+    if (digitalRead(buttonPin) == 0)               //LCD backlight ON OFF
+    {
+      digitalWrite(LCD_LIGHT_PIN, LOW);
+      Serial.println("Backlight OFF");
+    }
+    if (digitalRead(buttonPin) == 1)
+    {
+      digitalWrite(LCD_LIGHT_PIN, HIGH);
+      Serial.println("Backlight ON");
+    }
+  }
+
 
 
 
@@ -261,11 +317,11 @@ void loop(){
     lcd.setCursor(7, 0);
     lcd.print("V");
     lcd.setCursor(8, 0);                 // není to celý chyběj čidla
-    lcd.print(DHT.temperature);
+    lcd.print(oritemp);
     lcd.setCursor(10, 0);                 // není to celý chyběj čidla
     lcd.print("H");
     lcd.setCursor(11, 0);                 // není to celý chyběj čidla
-    lcd.print(DHT.humidity);
+    lcd.print(orihum);
     lcd.println("  ");
 
     lcd.setCursor(7, 1);
@@ -273,7 +329,8 @@ void loop(){
     lcd.setCursor(9, 1);                 // není to celý chyběj čidla
     lcd.print(settemp);
 
-
+    lcd.setCursor(13, 0);                  //sem vrazit šipky
+    lcd.print("   ");
     lcd.setCursor(15, 1);                  //sem vrazit šipky
     lcd.print("");
 
@@ -291,9 +348,9 @@ void loop(){
   if (Setup == 0){
     if(teplota1 <= settemp-histereze && teplota1 < OFFheat)  
     {// čeká na samovolné ohřátí
-      digitalWrite(led1, 0);
-      digitalWrite(led3, 0);
-      digitalWrite(led2, 1);
+      digitalWrite(led1, LOW);
+      digitalWrite(led2, HIGH);
+      digitalWrite(led3, LOW);
       Serial.print ("cekam na teplo");
       digitalWrite(rele1, LOW);
       digitalWrite(rele2, LOW);
@@ -307,9 +364,9 @@ void loop(){
 
     if(teplota1 <= settemp-histereze && teplota1 > OFFheat) { 
       // topí
-      digitalWrite(led1, 1);
-      digitalWrite(led2, 0);
-      digitalWrite(led3, 0);
+      digitalWrite(led1, HIGH);
+      digitalWrite(led2, LOW);
+      digitalWrite(led3, LOW);
       Serial.print ("topim");
       digitalWrite(rele1, LOW);
       digitalWrite(rele2, HIGH);
@@ -320,9 +377,9 @@ void loop(){
 
     if(teplota1 >= settemp+histereze && teplota1 <OFFcool) {   
       //chladí
-      digitalWrite(led1,0);
-      digitalWrite(led2, 0);
-      digitalWrite(led3, 1);
+      digitalWrite(led1,LOW);
+      digitalWrite(led2, LOW);
+      digitalWrite(led3, HIGH);
       Serial.print ("chladim");
       digitalWrite(rele1, HIGH);
       digitalWrite(rele2, LOW);
@@ -332,9 +389,9 @@ void loop(){
     }
     if(teplota1 >= settemp+histereze && teplota1 > OFFcool) { 
       //čeká na chladnutí 
-       digitalWrite(led1,0);
-      digitalWrite(led2, 1);
-      digitalWrite(led3, 0);
+      digitalWrite(led1,LOW);
+      digitalWrite(led2, HIGH);
+      digitalWrite(led3, LOW);
       Serial.println ("cekam na chlad minimalni teplotu chlazeni");
       digitalWrite(rele1, LOW);
       digitalWrite(rele2, LOW);
@@ -345,9 +402,9 @@ void loop(){
     if (teplota1 <= settemp-histereze && teplota1 <= OFFheat) //nedělá nic
     {
 
-      digitalWrite(led1,0);
-      digitalWrite(led2, 1);
-      digitalWrite(led3, 0);
+      digitalWrite(led1,LOW);
+      digitalWrite(led2, HIGH);
+      digitalWrite(led3, LOW);
       Serial.print ("cekam na hodnotu");
       //      delay (1000);
     }
@@ -356,8 +413,8 @@ void loop(){
     //      //    digitalWrite(led2, 1);
     //      //    digitalWrite(led3, 0);
     //      Serial.print ("přetopeno");
-    digitalWrite(rele1, LOW);
-    digitalWrite(rele2, LOW);
+    //    digitalWrite(rele1, LOW);
+    //    digitalWrite(rele2, LOW);
 
     //
     //    }
@@ -416,9 +473,6 @@ void doEncoderB(){
     rotating = false;
   }
 }
-
-
-
 
 
 
