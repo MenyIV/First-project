@@ -1,6 +1,6 @@
 
 #include <LiquidCrystal.h>
-#include <Wire.h>
+//#include <Wire.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <dht.h>
@@ -115,50 +115,11 @@ void setup() {
   // encoder pin on interrupt 1 (pin 3)         vlevo - SWW
   attachInterrupt(1, doEncoderB, CHANGE);
 
-  //TEST LED a rele
-  Serial.print("TEST");
-  digitalWrite (led1, HIGH);
-  digitalWrite(led2, LOW);
-  digitalWrite(led3, LOW);
-  digitalWrite(rele1, LOW);
-  digitalWrite(rele2, HIGH);
-  delay(1000);
-  digitalWrite(led1, LOW);
-  digitalWrite(led2, HIGH);
-  digitalWrite(led3, LOW);
-  digitalWrite(rele1, HIGH);
-  digitalWrite(rele2, LOW);
-  delay(1000);
-  digitalWrite(led1, LOW);
-  digitalWrite(led2, LOW);
-  digitalWrite(led3, HIGH);
-  digitalWrite(rele1, LOW);
-  digitalWrite(rele2, LOW);
-  delay(1000);
-  digitalWrite(led1, LOW);
-  digitalWrite(led2, LOW);
-  digitalWrite(led3, LOW);
-  digitalWrite(rele1, HIGH);
-  digitalWrite(rele2, HIGH);
-  delay(1000);
-  digitalWrite(led1, HIGH);
-  digitalWrite(led2, HIGH);
-  digitalWrite(led3, HIGH);
-  digitalWrite(rele1, LOW);
-  digitalWrite(rele2, LOW);
-  delay(1000);
-  digitalWrite(led1, LOW);
-  digitalWrite(led2, LOW);
-  digitalWrite(led3, LOW);
-  digitalWrite(rele1, LOW);
-  digitalWrite(rele2, LOW);
-
-
+ 
 
 }
 void loop(){
   //////////////////////////////////////////////////////////////////////////////////////////////////
-  //
   //
   //
   //načítání teplot  DS18 a DHT11
@@ -200,10 +161,9 @@ void loop(){
     Serial.print("temperature = ");
     oritemp = DHT.temperature + kortemp;
     Serial.print(oritemp); 
-    Serial.println("C  ");
+    Serial.println("°C  ");
     teplota0 = DHT.temperature;
     vlhko0 = DHT.humidity;
-
   }
 
 
@@ -212,8 +172,20 @@ void loop(){
   //
   // MENU setup = ano1 ne0        podmínka pro zaplé vyplé menu 
   //
-  //
+  //DODěLAT Přidat for a časování 
   /////////////////////////////////////////////////////////////////////////////////////
+if (digitalRead(clearButton) == LOW)     //měří čas zmačnutí tlačítka po vteřinách při každé vteřině blikne a
+int i = 1;
+  do {
+    i=i++
+  digitalWrite(led1, LOW);      //přičte jednu k proměnné Setup
+    digitalWrite(led2, LOW);  
+    digitalWrite(led3, LOW);      //hádě 
+
+    digitalWrite(led[i], HIGH); 
+    while(ditalRead(clearButton) == LOW)
+ }
+
 
   if (digitalRead(clearButton) == LOW && Setup == 0 )  
 
