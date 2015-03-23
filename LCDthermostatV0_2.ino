@@ -57,6 +57,10 @@ float korhum = 11 ;
 float lowesttemp;
 float highesttemp;
 
+float prumertemp1;
+float sbertemp;
+int pocetprirustku;
+
 
 //Casování programu
 int n = 100;
@@ -102,6 +106,7 @@ void setup() {
   OFFheat = 15;
   lowesttemp = 50 ;
   highesttemp = 1;
+  pocetprirustku = 1;
 
 
   //  LastReportedPos = 20;
@@ -182,7 +187,7 @@ if (digitalRead(clearButton) == LOW)     //měří čas zmačnutí tlačítka po
 int i = 1;
   do {
     i=i++
-  digitalWrite(led1, LOW);      //přičte jednu k proměnné Setup
+    digitalWrite(led1, LOW);      //přičte jednu k proměnné Setup
     digitalWrite(led2, LOW);  
     digitalWrite(led3, LOW);      //hádě 
 
@@ -272,12 +277,22 @@ int i = 1;
   //
   ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-if (teplota1 > highesttemp);{
+if (teplota1 > highesttemp);{       //maximum
   highesttemp = teplota1;
+  Serial.println ("maximum");
+   Serial.println (highesttemp);
 }
-if (teplota1 < lowestemp);{
+if (teplota1 < lowestemp);{         //minimum
   lowesttemp = teplota1;
+    Serial.println ("minimum");
+   Serial.println (lowesttemp);
 }
+
+sbertemp = sbertemp + teplota1;
+prumertemp1 = sbertemp / pocetprirustku;
+pocetprirustku = pocetprirustku + 1;
+
+
 
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -287,6 +302,8 @@ if (teplota1 < lowestemp);{
   //výpis na LCD
   //
   ///////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  ///////////////////////////////////////111111111111111/////////////////////////////////////////////
 
   if (Setup == 0){        //pokud je setup vyplý tak se vypisuje nějakej text na LCD
     lcd.clear();                        ///
@@ -324,6 +341,9 @@ if (teplota1 < lowestemp);{
     lcd.setCursor(15, 0);
     lcd.print("");
   }
+    ///////////////////////////////////////222222222222/////////////////////////////////////////////
+
+    
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   //
