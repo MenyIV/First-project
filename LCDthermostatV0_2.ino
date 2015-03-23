@@ -52,8 +52,10 @@ float OFFcool;
 float OFFheat;
 float oritemp;
 float orihum;
-float kortemp = -3;
+float kortemp = -3;    //korekce čidla DHT11
 float korhum = 11 ;
+float lowesttemp;
+float highesttemp;
 
 
 //Casování programu
@@ -98,6 +100,8 @@ void setup() {
   histereze = 1;
   OFFcool = 15;
   OFFheat = 15;
+  lowesttemp = 50 ;
+  highesttemp = 1;
 
 
   //  LastReportedPos = 20;
@@ -260,10 +264,20 @@ int i = 1;
       Serial.println("Backlight ON");
     }
   }
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  //
+  //
+  //
+  //statistika teplot
+  //
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-
+if (teplota1 > highesttemp);{
+  highesttemp = teplota1;
+}
+if (teplota1 < lowestemp);{
+  lowesttemp = teplota1;
+}
 
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -279,7 +293,8 @@ int i = 1;
     lcd.setCursor(0, 0);                //  /T1   T3    Tset             S
     lcd.print("A");  
     lcd.setCursor(1, 0);
-    lcd.print(teplota1);    ///
+    lcd.print(teplota1);
+    ///
     //  /T2   Hu    Tset-T1          S
     lcd.setCursor(0, 1);                ///
     lcd.print("B");
