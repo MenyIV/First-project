@@ -54,8 +54,8 @@ float oritemp;
 float orihum;
 float kortemp = -3;    //korekce čidla DHT11
 float korhum = 11 ;
-float lowesttemp;
-float highesttemp;
+float mintemp1;
+float maxtemp1;
 
 float prumertemp1;
 float sbertemp;
@@ -104,8 +104,8 @@ void setup() {
   histereze = 1;
   OFFcool = 15;
   OFFheat = 15;
-  lowesttemp = 50 ;
-  highesttemp = 1;
+  mintemp1 = 50 ;
+  maxtemp1 = 1;
   pocetprirustku = 1;
 
 
@@ -179,28 +179,24 @@ void loop(){
   /////////////////////////////////////////////////////////////////////////////////////////
   //
   //
-  // MENU setup = ano1 ne0        podmínka pro zaplé vyplé menu 
+  // MENU setup 0 == vyplé Default
+  // MENU setup 1 == statistiky
+  // MENU setup 2 == nastavování teploty SetupON
   //
-  //DODěLAT Přidat for a časování 
+  //
   /////////////////////////////////////////////////////////////////////////////////////
-if (digitalRead(clearButton) == LOW)     //měří čas zmačnutí tlačítka po vteřinách při každé vteřině blikne a
-int i = 1;
-  do {
-    i=i++
-    digitalWrite(led1, LOW);      //přičte jednu k proměnné Setup
-    digitalWrite(led2, LOW);  
-    digitalWrite(led3, LOW);      //hádě 
-
-    digitalWrite(led[i], HIGH); 
-    while(ditalRead(clearButton) == LOW)
- }
 
 
-  if (digitalRead(clearButton) == LOW && Setup == 0 )  
-
+  if (digitalRead(clearButton) == LOW && Setup <= 2)  
   {        //klik SW
-    Serial.println("SW klik ON");
-    Setup = 1;
+    Serial.println("SW klik");
+    Setup = Setup + 1;
+    Serial.println("Setup=");
+    Setial.print(Setup);
+  }
+ 
+  if (Setup == 2)  
+  {  
     delay (300);
     lcd.clear();
     lcd.setCursor(0, 0);
@@ -209,19 +205,7 @@ int i = 1;
     lcd.print("T");
     lcd.setCursor(1, 1);
     lcd.print(teplota1);
-  }
-  if (digitalRead(clearButton) == LOW && Setup == 1 )  {        //klik SW
-    Serial.println("SW klik OFF");
-    Setup = 0;                                                  // ukončení nastavení zapíše settemp
-    settemp = lastReportedPos;
-    lastReportedPos = settemp;
-    encoderPos=lastReportedPos;
-    delay (500);
-  }
-  if (Setup == 1){
-    //    do
-    //    {       //když je zaplý setup ano1 
-    rotating = true;  // reset the debouncer
+     rotating = true;  // reset the debouncer
     if (encoderPos > 50 ){
       //    encoderPos = 0;
       lastReportedPos = 49;             //nepustí pod TsetMAX      koncák
@@ -244,9 +228,18 @@ int i = 1;
       lcd.println(lastReportedPos);
 
     }
-    //    }
-    //    while (digitalRead(clearButton) == LOW && Setup == 1);
+}
+
+  if (Setup > 2 )  {        //klik SW
+    Serial.println("SW klik OFF");
+    Setup = 0;                                                  // ukončení nastavení zapíše settemp
+    settemp = lastReportedPos;
+    lastReportedPos = settemp;
+    encoderPos=lastReportedPos;
+    delay (500);
   }
+
+ 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   //
   //
@@ -277,15 +270,15 @@ int i = 1;
   //
   ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-if (teplota1 > highesttemp);{       //maximum
-  highesttemp = teplota1;
+if (teplota1 > maxtemp1);{       //maximum
+  maxtemp1 = teplota1;
   Serial.println ("maximum");
-   Serial.println (highesttemp);
+   Serial.println (maxtemp1);
 }
-if (teplota1 < lowestemp);{         //minimum
-  lowesttemp = teplota1;
+if (teplota1 < mintemp1);{         //minimum
+  mintemp1 = teplota1;
     Serial.println ("minimum");
-   Serial.println (lowesttemp);
+   Serial.println (mintemp1);
 }
 
 sbertemp = sbertemp + teplota1;
@@ -342,7 +335,36 @@ pocetprirustku = pocetprirustku + 1;
     lcd.print("");
   }
     ///////////////////////////////////////222222222222/////////////////////////////////////////////
-
+  if (Setup == 1){        
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Min:");  
+    lcd.setCursor(4, 0);
+    lcd.print(mintemp1);
+    lcd.setCursor(0, 1);
+    lcd.print("Max:");
+    lcd.setCursor(4, 1);
+    lcd.print(maxtemp1);
+    lcd.setCursor(7, 0);
+    lcd.print("P");                                          //vlozit specialni znak prumeru
+    lcd.setCursor(8, 0);
+    lcd.print(prumertemp1);
+  //  lcd.setCursor(10, 0);
+  //  lcd.print("H");
+  //  lcd.setCursor(11, 0);
+ //   lcd.print(orihum);
+ //   lcd.println("  ");
+ //   lcd.setCursor(7, 1);
+   lcd.print("S");
+   lcd.setCursor(9, 1);
+   lcd.print(settemp);
+  //  lcd.setCursor(13, 0);         
+  //  lcd.print("   ");
+   lcd.setCursor(15, 1);                  //sem vrazit šipky
+   lcd.print("");
+    lcd.setCursor(15, 0);             //sem vrazit šipky
+    lcd.print("");
+  }
     
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
